@@ -84,6 +84,7 @@ func sendReq(dest string, msg []byte) (int, error) {
 	if err != nil {
 		return 0, err
 	}
+
 	req.Header.Set("Content-Type", "application/json")
 
 	client := &http.Client{}
