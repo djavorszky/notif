@@ -16,8 +16,13 @@ import (
 // used primarily, except if the method specifies otherwise.
 var Dest = "http://localhost:80/message"
 
-// Snd sends the message to the specified destination, or to DefaultDest if missing.
+// Snd JSONifies the message, then sends it as a POST request to the DefaultDest.
 func Snd(msg Fireable) error {
+	return SndLoc(msg, Dest)
+}
+
+// SndLoc JSONifies the message, then sends it as a POST request to the specified destination.
+func SndLoc(msg Fireable, dest string) error {
 	jMsg, err := json.Marshal(msg)
 	if err != nil {
 		return err
