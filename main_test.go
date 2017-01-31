@@ -22,8 +22,7 @@ func TestJSONifyMsg(t *testing.T) {
 		t.Errorf("Couldn't unjsonify jsonified Msg: %q", err.Error())
 	}
 
-	if msg2 != msg {
-		t.Errorf("Seems like the two msgs are not the same: Orig:%q\nvs\nRe-jsonified%q", msg, msg2)
+	if msg != msg2 {
+		t.Errorf("Seems like the two msgs are not the same:\nOrig\t\t%v\nRe-jsonified\t%v", msg, msg2)
 	}
-
 }
