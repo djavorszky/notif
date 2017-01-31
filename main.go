@@ -23,7 +23,7 @@ func Snd(msg Fireable) error {
 
 // SndLoc JSONifies the message, then sends it as a POST request to the specified destination.
 func SndLoc(msg Fireable, dest string) error {
-	jMsg, err := json.Marshal(msg)
+	jMsg, err := jsonify(msg)
 	if err != nil {
 		return err
 	}
@@ -74,4 +74,13 @@ func sendReq(dest string, msg []byte) (int, error) {
 	defer resp.Body.Close()
 
 	return resp.StatusCode, nil
+}
+
+func jsonify(msg Fireable) ([]byte, error) {
+	b, err := json.Marshal(msg)
+	if err != nil {
+		return nil, err
+	}
+
+	return b, err
 }
