@@ -48,7 +48,7 @@ func watch(ch chan Y, ID int, address string) {
 	for y := range ch {
 		m := Msg{ID, y.StatusCode, y.Msg}
 
-		err := sndLoc(m, address)
+		err := SndLoc(m, address)
 		if err != nil {
 			log.Println(err)
 		}
@@ -57,11 +57,11 @@ func watch(ch chan Y, ID int, address string) {
 
 // snd JSONifies the message, then sends it as a POST request to the DefaultDest.
 func snd(msg Fireable) error {
-	return sndLoc(msg, Dest)
+	return SndLoc(msg, Dest)
 }
 
-// sndLoc JSONifies the message, then sends it as a POST request to the specified destination.
-func sndLoc(msg Fireable, dest string) error {
+// SndLoc JSONifies the message, then sends it as a POST request to the specified destination.
+func SndLoc(msg Fireable, dest string) error {
 	jMsg, err := jsonify(msg)
 	if err != nil {
 		return err
