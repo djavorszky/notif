@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/djavorszky/ddn/inet"
+	"github.com/djavorszky/ddn/common/inet"
 )
 
 func TestJSONifyMsg(t *testing.T) {
