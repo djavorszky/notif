@@ -6,6 +6,7 @@ package notif
 import (
 	"bytes"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 
@@ -96,12 +97,9 @@ func sendReq(dest string, msg []byte) (status int, message string, err error) {
 	}
 	defer resp.Body.Close()
 
-	var bs []byte
+	var buf bytes.Buffer
 
-	_, err = resp.Body.Read(bs)
-	if err != nil {
-		return 0, "", fmt.Errorf("reading response body failed: %s", err.Error())
-	}
+	io.Copy(&buf, resp.Body)
 
-	return resp.StatusCode, string(bs[:]), nil
+	return resp.StatusCode, buf.String(), nil
 }
