@@ -5,10 +5,11 @@ package notif
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/djavorszky/ddn/inet"
 )
 
 // Dest should be a valid URL on the remote host. It should be the full package,
@@ -48,7 +49,7 @@ func watch(ch chan Y, ID int, address string) {
 	for y := range ch {
 		m := Msg{ID, y.StatusCode, y.Msg}
 
-		err := SndLoc(m, address)
+		_, err := SndLoc(m, address)
 		if err != nil {
 			log.Println(err)
 		}
@@ -56,33 +57,33 @@ func watch(ch chan Y, ID int, address string) {
 }
 
 // snd JSONifies the message, then sends it as a POST request to the DefaultDest.
-func snd(msg Fireable) error {
+func snd(msg Fireable) (string, error) {
 	return SndLoc(msg, Dest)
 }
 
 // SndLoc JSONifies the message, then sends it as a POST request to the specified destination.
-func SndLoc(msg Fireable, dest string) error {
-	jMsg, err := jsonify(msg)
+func SndLoc(msg Fireable, dest string) (resp string, err error) {
+	jMsg, err := inet.JSONify(msg)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	statusCode, err := sendReq(dest, jMsg)
+	statusCode, resp, err := sendReq(dest, jMsg)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	if statusCode != http.StatusOK {
-		return fmt.Errorf("Got non-200 response: %d", statusCode)
+		return "", fmt.Errorf("got non-200 response: %d", statusCode)
 	}
 
-	return nil
+	return resp, nil
 }
 
-func sendReq(dest string, msg []byte) (int, error) {
+func sendReq(dest string, msg []byte) (status int, message string, err error) {
 	req, err := http.NewRequest(http.MethodPost, dest, bytes.NewBuffer(msg))
 	if err != nil {
-		return 0, err
+		return 0, "", err
 	}
 
 	req.Header.Set("Content-Type", "application/json")
@@ -91,18 +92,16 @@ func sendReq(dest string, msg []byte) (int, error) {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return 0, err
+		return 0, "", fmt.Errorf("sending request failed: %s", err.Error())
 	}
 	defer resp.Body.Close()
 
-	return resp.StatusCode, nil
-}
+	var bs []byte
 
-func jsonify(msg Fireable) ([]byte, error) {
-	b, err := json.Marshal(msg)
+	_, err = resp.Body.Read(bs)
 	if err != nil {
-		return nil, err
+		return 0, "", fmt.Errorf("reading response body failed: %s", err.Error())
 	}
 
-	return b, err
+	return resp.StatusCode, string(bs[:]), nil
 }

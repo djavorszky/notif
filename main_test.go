@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"net/http"
 	"testing"
+
+	"github.com/djavorszky/ddn/inet"
 )
 
 func TestJSONifyMsg(t *testing.T) {
@@ -12,7 +14,7 @@ func TestJSONifyMsg(t *testing.T) {
 
 	msg := Msg{1, http.StatusOK, "TEST MESSAGE"}
 
-	b, err := jsonify(msg)
+	b, err := inet.JSONify(msg)
 	if err != nil {
 		t.Errorf("Couldn't jsonify Msg: %q", err.Error())
 	}
