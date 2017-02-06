@@ -10,7 +10,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/djavorszky/ddn/inet"
+	"github.com/djavorszky/ddn/common/inet"
 )
 
 // Dest should be a valid URL on the remote host. It should be the full package,
