@@ -75,7 +75,7 @@ func SndLoc(msg Fireable, dest string) (resp string, err error) {
 	}
 
 	if statusCode != http.StatusOK {
-		return "", fmt.Errorf("got non-200 response: %d", statusCode)
+		return "", fmt.Errorf("got non-200 response '%d' and message: %s", statusCode, resp)
 	}
 
 	return resp, nil
